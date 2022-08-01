@@ -13,7 +13,7 @@ namespace Kinel.Counter.Editor
         internal const string DEBUG_LOG_PREFIX = "[<color=#58ACFA>KineL</color>]";
         internal const string DEBUG_ERROR_PREFIX = "[<color=#dc143c>KineL</color>]";
 
-        internal const string HEADER_IMAGE_GUID = "6bc2959ee80eb4d4dbdb46be56f94dfa";
+        internal const string HEADER_IMAGE_GUID = "397c114a97607cd41abaed71f036c0cb";
         
         private Texture headerTexture;
         private SerializedProperty countText, limitText, limit, animation;
@@ -64,7 +64,7 @@ namespace Kinel.Counter.Editor
             EditorGUILayout.BeginVertical(GUI.skin.box);
             {
                 EditorGUILayout.Space();
-                EditorGUILayout.LabelField("Kinel Player Counter", EditorStyles.boldLabel);
+                EditorGUILayout.LabelField("Kinel Player Counter v1.3.1", EditorStyles.boldLabel);
                 EditorGUILayout.Space();
             }
             EditorGUILayout.EndVertical();
@@ -73,7 +73,17 @@ namespace Kinel.Counter.Editor
 
         public void DrawUserProperty()
         {
-            EditorGUILayout.PropertyField(limit, new GUIContent("limit / 最大人数"));
+            EditorGUILayout.Space();
+            EditorGUILayout.BeginVertical(GUI.skin.box);
+            {
+                EditorGUILayout.LabelField("基本設定 / Settings", EditorStyles.boldLabel);
+                EditorGUILayout.Space();
+                EditorGUILayout.PropertyField(limit, new GUIContent("最大人数 / limit"));
+                EditorGUILayout.HelpBox("カウントする最大人数(インスタンス最大人数等) / " +
+                                       "Maximum number of people to be counted (e.g., maximum number of instances)", MessageType.Info);
+                EditorGUILayout.Space();
+            }
+            EditorGUILayout.EndVertical();
         }
 
         public void DrawInternalProperty()
