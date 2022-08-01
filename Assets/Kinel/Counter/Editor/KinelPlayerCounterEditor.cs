@@ -54,6 +54,8 @@ namespace Kinel.Counter.Editor
             
             UdonSharpGUI.DrawUILine();
             
+            serializedObject.Update();
+            
             EditorGUILayout.Space();
             DrawHeader();
             EditorGUILayout.Space();
@@ -62,6 +64,8 @@ namespace Kinel.Counter.Editor
             DrawInternalProperty();
             EditorGUILayout.Space();
             DrawFooter();
+
+            serializedObject.ApplyModifiedProperties();
         }
         
 
