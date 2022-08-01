@@ -1,9 +1,9 @@
 # <b> KineL Player Counter <small>1.3.1</small></b>
 
-> 多機能な動画再生システム
+> VRCワールド用の人数カウンター
 
-[Booth](https://kinel.booth.pm/items/2758684)
-[GitHub](https://github.com/niwaniwa/KineLVideoPlayer)
-[はじめる](#docsify)
+[Booth](https://kinel.booth.pm/items/2684600)
+[GitHub](https://github.com/niwaniwa/PlayerCounter)
+[はじめる](#特徴)
 
 <!-- ![color](#f0f0f0) -->

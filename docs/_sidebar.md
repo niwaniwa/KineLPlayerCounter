@@ -3,4 +3,16 @@
     <H1>KineL Player Counter</H1>
 </div>
 
-- Overview
+
+- [Overview](README.md)
+
+- Basic setting
+
+  - [Install](install)
+  - [Settings](baseSetting.md)
+
+- Other
+
+  - [Update History](update.md)
+
+
