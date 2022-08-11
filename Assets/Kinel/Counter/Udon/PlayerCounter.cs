@@ -1,4 +1,5 @@
-﻿using UdonSharp;
+﻿using System;
+using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
@@ -12,21 +13,35 @@ namespace Kinel.Counter.Udon
         public Text countText, limitText;
         public float limit = 32f;
         public Animator anim;
+        public PlayerCounterArea[] areas;
+        public bool areaManagement = false; // true = エリアごとの人数カウント, false = ワールド全体の人数カウント
     
         private int localPlayerCount = 0;
-    
+        
+
+        public void Start()
+        {
+            
+        }
+
         public override void OnPlayerJoined(VRCPlayerApi player)
         {
+            if (Networking.LocalPlayer == player)
+                limitText.text = $"{limit}";
+            
+            
+            if (areaManagement)
+                return;
+            
             localPlayerCount++;
             UpdateCounter();
-            if (Networking.LocalPlayer == player)
-            {
-                limitText.text = $"{limit}";
-            }
         }
 
         public override void OnPlayerLeft(VRCPlayerApi player)
         {
+            if (areaManagement)
+                return;
+            
             localPlayerCount--;
             UpdateCounter();
         }
@@ -36,6 +51,16 @@ namespace Kinel.Counter.Udon
             countText.text = $"{localPlayerCount}";
             anim.SetFloat("value", localPlayerCount / limit);
         }
+
+        public void OnUpdateAreaCount()
+        {
+            localPlayerCount = 0;
+            foreach (var area in areas)
+            {
+                localPlayerCount += area.PlayerCount;
+            }
+        }
+        
 
 
 
