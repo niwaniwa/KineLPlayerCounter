@@ -22,7 +22,8 @@ namespace Kinel.Counter.Editor
         internal const string TWITTER_URL = "https://twitter.com/ni_rilana";
         internal const string DOCUMENT_URL = "https://niwaniwa.github.io/PlayerCounter/#/ja-jp/";
         
-        private SerializedProperty countText, limitText, limit, animation;
+        private SerializedProperty countText, limitText, limit, animation, isPlatformCountMode, isQuest;
+        
 
         private bool isFold = false;
         
@@ -44,6 +45,8 @@ namespace Kinel.Counter.Editor
             limitText = serializedObject.FindProperty(nameof(PlayerCounter.limitText));
             limit = serializedObject.FindProperty(nameof(PlayerCounter.limit));
             animation = serializedObject.FindProperty(nameof(PlayerCounter.anim));
+            isPlatformCountMode = serializedObject.FindProperty(nameof(PlayerCounter.isPlatformCountMode));
+            isQuest = serializedObject.FindProperty(nameof(PlayerCounter.isQuest));
         }
 
         public override void OnInspectorGUI()
@@ -83,6 +86,9 @@ namespace Kinel.Counter.Editor
                 EditorGUILayout.Space();
             }
             EditorGUILayout.EndVertical();
+
+            EditorGUILayout.PropertyField(isPlatformCountMode);
+            EditorGUILayout.PropertyField(isQuest);
         }
 
         public void DrawInternalProperty()
