@@ -21,15 +21,21 @@ namespace Kinel.Counter.Udon
 
         public void Start()
         {
-            
+            foreach (PlayerCounterArea area in areas)
+            {
+                area.RegisterCounter(this);
+            }
         }
 
         public override void OnPlayerJoined(VRCPlayerApi player)
         {
             if (Networking.LocalPlayer == player)
+            {
                 limitText.text = $"{limit}";
-            
-            
+                UpdateCounter();
+            }
+
+
             if (areaManagement)
                 return;
             
