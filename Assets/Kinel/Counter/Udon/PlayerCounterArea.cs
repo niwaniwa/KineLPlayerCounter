@@ -2,23 +2,31 @@
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
+using VRC.Udon.Common.Interfaces;
 
 namespace Kinel.Counter.Udon
 {
     public class PlayerCounterArea : UdonSharpBehaviour
     {
 
-        [CanBeNull] private const string DEBUG_PREFIX = "[[<color=#58ACFA>KineL</color><color=#b44c97>#Counter</color>]";
+        private const string DEBUG_PREFIX = "[[<color=#58ACFA>KineL</color><color=#b44c97>#Counter</color>]";
         
         private PlayerCounter[] _listeners;
 
+        [UdonSynced, FieldChangeCallback(nameof(GlobalPlayerCount))] private int globalPayerCount = 0;
         private int playerCount = 0;
+        
 
-        public int PlayerCount
+        public int GlobalPlayerCount
         {
-            get => playerCount;
-            private set => playerCount = value;
+            get => globalPayerCount;
+            private set {
+                globalPayerCount = value;
+                playerCount = globalPayerCount;
+            }
         }
+        
+        
         
         public void RegisterCounter(PlayerCounter listener)
         {
@@ -63,13 +71,43 @@ namespace Kinel.Counter.Udon
 
         public override void OnPlayerTriggerEnter(VRCPlayerApi player)
         {
-            playerCount++;
+            if (!Networking.IsOwner(player, gameObject))
+            {
+                if(playerCount == 0)
+                    Networking.SetOwner(player, gameObject);
+            }
+
+            SendCustomNetworkEvent(NetworkEventTarget.All, nameof(CountUp));
+
         }
 
         public override void OnPlayerTriggerExit(VRCPlayerApi player)
         {
+            if (!Networking.IsOwner(player, gameObject))
+                return;
+
             playerCount--;
         }
+
+        public override void OnPlayerJoined(VRCPlayerApi player)
+        {
+            if (Networking.IsOwner(Networking.LocalPlayer, gameObject))
+            {
+                RequestSerialization();
+            }
+        }
+      
+
+        public void CountUp()
+        {
+            
+        }
+
+        public void CoundDown()
+        {
+            
+        }
+        
 
         public void UpdateCount()
         {
@@ -77,6 +115,11 @@ namespace Kinel.Counter.Udon
             {
                 counter.OnUpdateAreaCount();
             }
+        }
+
+        public void TakeOwnership()
+        {
+            
         }
     }
     
