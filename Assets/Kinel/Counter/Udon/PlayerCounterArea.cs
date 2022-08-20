@@ -6,6 +6,7 @@ using VRC.Udon.Common.Interfaces;
 
 namespace Kinel.Counter.Udon
 {
+    [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
     public class PlayerCounterArea : UdonSharpBehaviour
     {
 
@@ -15,6 +16,8 @@ namespace Kinel.Counter.Udon
 
         [UdonSynced, FieldChangeCallback(nameof(GlobalPlayerCount))] private int globalPayerCount = 0;
         private int playerCount = 0;
+
+        private bool isInside = false;
         
 
         public int GlobalPlayerCount
@@ -23,6 +26,7 @@ namespace Kinel.Counter.Udon
             private set {
                 globalPayerCount = value;
                 playerCount = globalPayerCount;
+                UpdateCount();
             }
         }
         
@@ -71,41 +75,67 @@ namespace Kinel.Counter.Udon
 
         public override void OnPlayerTriggerEnter(VRCPlayerApi player)
         {
+            if (!Utilities.IsValid(player))
+                return;
+            
+            if (!Networking.LocalPlayer.Equals(player))
+                return;
+            
+            if (isInside)
+                return;
+            
             if (!Networking.IsOwner(player, gameObject))
             {
                 if(playerCount == 0)
                     Networking.SetOwner(player, gameObject);
             }
-
+            
+            Debug.Log($"{DEBUG_PREFIX} {player.displayName}");
+            isInside = true;
             SendCustomNetworkEvent(NetworkEventTarget.All, nameof(CountUp));
-
+            
         }
 
         public override void OnPlayerTriggerExit(VRCPlayerApi player)
         {
-            if (!Networking.IsOwner(player, gameObject))
+            if (!Utilities.IsValid(player))
                 return;
+            
+            if (!Networking.LocalPlayer.Equals(player))
+                return;
+            // if (!Networking.IsOwner(player, gameObject))
+            //     return;
 
-            playerCount--;
+            // playerCount--;
+            
+            if (!isInside)
+                return;
+            
+            Debug.Log($"{DEBUG_PREFIX} {player.displayName}");
+            isInside = false;
+            SendCustomNetworkEvent(NetworkEventTarget.All, nameof(CountDown));
         }
 
         public override void OnPlayerJoined(VRCPlayerApi player)
         {
-            if (Networking.IsOwner(Networking.LocalPlayer, gameObject))
-            {
-                RequestSerialization();
-            }
+            
         }
       
 
         public void CountUp()
         {
-            
+            playerCount++;
+            GlobalPlayerCount = playerCount;
+            RequestSerialization();
+            UpdateCount();
         }
 
-        public void CoundDown()
+        public void CountDown()
         {
-            
+            playerCount--;
+            GlobalPlayerCount = playerCount;
+            RequestSerialization();
+            UpdateCount();
         }
         
 
@@ -117,10 +147,7 @@ namespace Kinel.Counter.Udon
             }
         }
 
-        public void TakeOwnership()
-        {
-            
-        }
+      
     }
     
 }

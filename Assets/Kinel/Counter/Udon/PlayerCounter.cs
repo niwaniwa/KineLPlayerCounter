@@ -63,8 +63,10 @@ namespace Kinel.Counter.Udon
             localPlayerCount = 0;
             foreach (var area in areas)
             {
-                localPlayerCount += area.PlayerCount;
+                localPlayerCount += area.GlobalPlayerCount;
             }
+
+            UpdateCounter();
         }
         
 
