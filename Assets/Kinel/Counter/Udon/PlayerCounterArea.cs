@@ -1,4 +1,5 @@
-﻿using JetBrains.Annotations;
+﻿using System;
+using JetBrains.Annotations;
 using UdonSharp;
 using UnityEngine;
 using VRC.SDKBase;
@@ -15,7 +16,6 @@ namespace Kinel.Counter.Udon
         private PlayerCounter[] _listeners;
 
         [UdonSynced, FieldChangeCallback(nameof(GlobalPlayerCount))] private int globalPayerCount = 0;
-        private int playerCount = 0;
 
         private bool isInside = false;
         
@@ -25,13 +25,16 @@ namespace Kinel.Counter.Udon
             get => globalPayerCount;
             private set {
                 globalPayerCount = value;
-                playerCount = globalPayerCount;
                 UpdateCount();
             }
         }
-        
-        
-        
+
+        public void Start()
+        {
+
+        }
+
+
         public void RegisterCounter(PlayerCounter listener)
         {
             if (_listeners == null)
@@ -77,23 +80,18 @@ namespace Kinel.Counter.Udon
         {
             if (!Utilities.IsValid(player))
                 return;
-            
-            if (!Networking.LocalPlayer.Equals(player))
+
+            if (Networking.LocalPlayer.Equals(player))
+                isInside = true;
+
+            if (!Networking.IsOwner(Networking.LocalPlayer, gameObject))
                 return;
             
-            if (isInside)
-                return;
+            Debug.Log($"{DEBUG_PREFIX} {player.displayName} join");
+
+
             
-            if (!Networking.IsOwner(player, gameObject))
-            {
-                if(playerCount == 0)
-                    Networking.SetOwner(player, gameObject);
-            }
-            
-            Debug.Log($"{DEBUG_PREFIX} {player.displayName}");
-            isInside = true;
-            SendCustomNetworkEvent(NetworkEventTarget.All, nameof(CountUp));
-            
+            CountUp();
         }
 
         public override void OnPlayerTriggerExit(VRCPlayerApi player)
@@ -101,43 +99,60 @@ namespace Kinel.Counter.Udon
             if (!Utilities.IsValid(player))
                 return;
             
-            if (!Networking.LocalPlayer.Equals(player))
-                return;
-            // if (!Networking.IsOwner(player, gameObject))
-            //     return;
-
-            // playerCount--;
+            if (Networking.LocalPlayer.Equals(player))
+                isInside = false;
             
-            if (!isInside)
+            if (!Networking.IsOwner(Networking.LocalPlayer, gameObject))
                 return;
             
-            Debug.Log($"{DEBUG_PREFIX} {player.displayName}");
-            isInside = false;
-            SendCustomNetworkEvent(NetworkEventTarget.All, nameof(CountDown));
+            Debug.Log($"{DEBUG_PREFIX} {player.displayName} exit");
+            
+            CountDown();
         }
 
         public override void OnPlayerJoined(VRCPlayerApi player)
         {
             
         }
-      
+
+        public override void OnPlayerLeft(VRCPlayerApi player)
+        {
+            Debug.Log($"------------------------------");
+            Debug.Log($"-|        Player Left       |-");
+            Debug.Log($"------------------------------");
+            Debug.Log($"-|                          |-");
+            Debug.Log($"-|           Name           |-");
+            // Debug.Log($"-|  {player.displayName}  |-");
+            Debug.Log($"-|   {Utilities.IsValid(player)}     |-");
+            Debug.Log($"-|                          |-");
+            Debug.Log($"------------------------------");
+            
+
+
+            if (!Networking.IsOwner(player, gameObject))
+                return;
+
+        }
+
+        public override void OnPlayerRespawn(VRCPlayerApi player)
+        {
+            Debug.Log($"{DEBUG_PREFIX} respawn");
+        }
 
         public void CountUp()
         {
-            playerCount++;
-            GlobalPlayerCount = playerCount;
+            globalPayerCount++;
             RequestSerialization();
             UpdateCount();
         }
 
         public void CountDown()
         {
-            playerCount--;
-            GlobalPlayerCount = playerCount;
+            globalPayerCount = Mathf.Clamp(globalPayerCount--, 0, VRCPlayerApi.GetPlayerCount());
             RequestSerialization();
             UpdateCount();
         }
-        
+
 
         public void UpdateCount()
         {
@@ -146,6 +161,7 @@ namespace Kinel.Counter.Udon
                 counter.OnUpdateAreaCount();
             }
         }
+
 
       
     }
