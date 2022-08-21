@@ -21,6 +21,8 @@ namespace Kinel.Counter.Udon
 
         public void Start()
         {
+
+
             foreach (PlayerCounterArea area in areas)
             {
                 area.RegisterCounter(this);
@@ -54,7 +56,7 @@ namespace Kinel.Counter.Udon
 
         private void UpdateCounter()
         {
-            countText.text = $"{localPlayerCount}";
+            countText.text = (areaManagement && areas.Length == 0) ? "?" : $"{localPlayerCount}";
             anim.SetFloat("value", localPlayerCount / limit);
         }
 
