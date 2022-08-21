@@ -1,4 +1,5 @@
 ﻿using System;
+using BestHTTP.Extensions;
 using JetBrains.Annotations;
 using UdonSharp;
 using UnityEngine;
@@ -11,11 +12,15 @@ namespace Kinel.Counter.Udon
     public class PlayerCounterArea : UdonSharpBehaviour
     {
 
-        private const string DEBUG_PREFIX = "[[<color=#58ACFA>KineL</color><color=#b44c97>#Counter</color>]";
+        private const string DEBUG_PREFIX = "[<color=#58ACFA>KineL</color><color=#b44c97>#Counter</color>]";
+
+        [Tooltip("デバッグメッセージを出力します")]
+        [SerializeField] private bool debug;
         
         private PlayerCounter[] _listeners;
 
         [UdonSynced, FieldChangeCallback(nameof(GlobalPlayerCount))] private int globalPayerCount = 0;
+        [UdonSynced] private string playerIDs = "";
 
         private bool isInside = false;
         
@@ -23,7 +28,7 @@ namespace Kinel.Counter.Udon
         public int GlobalPlayerCount
         {
             get => globalPayerCount;
-            private set {
+            set {
                 globalPayerCount = value;
                 UpdateCount();
             }
@@ -33,7 +38,6 @@ namespace Kinel.Counter.Udon
         {
 
         }
-
 
         public void RegisterCounter(PlayerCounter listener)
         {
@@ -60,9 +64,9 @@ namespace Kinel.Counter.Udon
             int i = 0;
             for (; i < _listeners.Length; i++)
             {
-                temp[i] = _listeners[i];
                 if (_listeners[i].name.Equals(listener.name))
                     break;
+                temp[i] = _listeners[i];
             }
 
             for (; i < _listeners.Length - 1; i++)
@@ -87,10 +91,10 @@ namespace Kinel.Counter.Udon
             if (!Networking.IsOwner(Networking.LocalPlayer, gameObject))
                 return;
             
-            Debug.Log($"{DEBUG_PREFIX} {player.displayName} join");
+            if(debug)
+                Debug.Log($"{DEBUG_PREFIX} {player.displayName} enter, {playerIDs}");
 
-
-            
+            AddPlayer(player.playerId);
             CountUp();
         }
 
@@ -105,8 +109,10 @@ namespace Kinel.Counter.Udon
             if (!Networking.IsOwner(Networking.LocalPlayer, gameObject))
                 return;
             
-            Debug.Log($"{DEBUG_PREFIX} {player.displayName} exit");
+            if(debug)
+                Debug.Log($"{DEBUG_PREFIX} {player.displayName} exit");
             
+            RemovePlayer(player.playerId);
             CountDown();
         }
 
@@ -117,38 +123,40 @@ namespace Kinel.Counter.Udon
 
         public override void OnPlayerLeft(VRCPlayerApi player)
         {
-            Debug.Log($"------------------------------");
-            Debug.Log($"-|        Player Left       |-");
-            Debug.Log($"------------------------------");
-            Debug.Log($"-|                          |-");
-            Debug.Log($"-|           Name           |-");
-            // Debug.Log($"-|  {player.displayName}  |-");
-            Debug.Log($"-|   {Utilities.IsValid(player)}     |-");
-            Debug.Log($"-|                          |-");
-            Debug.Log($"------------------------------");
+            if (debug)
+            {
+                Debug.Log($"{DEBUG_PREFIX} Player left {player.displayName}, check:{CheckID(player.playerId)} ");
+                Debug.Log($"{DEBUG_PREFIX} {playerIDs} {player.playerId}");
+            }
             
-
-
-            if (!Networking.IsOwner(player, gameObject))
+            if (!Networking.IsOwner(Networking.LocalPlayer, gameObject))
                 return;
+
+            
+            if (CheckID(player.playerId))
+            {
+                RemovePlayer(player.playerId);
+                CountDown();
+            }
 
         }
 
         public override void OnPlayerRespawn(VRCPlayerApi player)
         {
-            Debug.Log($"{DEBUG_PREFIX} respawn");
+            if (debug)
+                Debug.Log($"{DEBUG_PREFIX} respawn");
         }
 
         public void CountUp()
         {
-            globalPayerCount++;
+            GlobalPlayerCount++;
             RequestSerialization();
             UpdateCount();
         }
 
         public void CountDown()
         {
-            globalPayerCount = Mathf.Clamp(globalPayerCount--, 0, VRCPlayerApi.GetPlayerCount());
+            GlobalPlayerCount = Mathf.Clamp(GlobalPlayerCount - 1, 0, VRCPlayerApi.GetPlayerCount());
             RequestSerialization();
             UpdateCount();
         }
@@ -160,6 +168,59 @@ namespace Kinel.Counter.Udon
             {
                 counter.OnUpdateAreaCount();
             }
+        }
+
+        public void AddPlayer(int id)
+        {
+            if (!Networking.IsOwner(Networking.LocalPlayer, gameObject))
+                return;
+            
+            playerIDs += $"{id},";
+            RequestSerialization();
+        }
+
+        public void RemovePlayer(int id)
+        {
+            if (!Networking.IsOwner(Networking.LocalPlayer, gameObject) || String.IsNullOrEmpty(playerIDs))
+                return;
+            
+            var idArray = playerIDs.Split(',');
+            string temp = "";
+
+            int i = 0;
+            for (; i < idArray.Length; i++)
+            {
+                if (Int32.Parse(idArray[i]).Equals(id))
+                    break;
+                
+                temp += $"{idArray[i]},";
+            }
+
+            for (; i < idArray.Length - 1; i++)
+            {
+                if (String.IsNullOrEmpty(idArray[i + 1]))
+                    continue;
+                
+                temp += $"{idArray[i + 1]},";
+            }
+
+            playerIDs = temp;
+            RequestSerialization();
+
+        }
+
+        public bool CheckID(int id)
+        {
+            if (String.IsNullOrEmpty(playerIDs))
+                return false;
+            
+            var idArray = playerIDs.Split(',');
+            
+            for (int i = 0; i < idArray.Length; i++)
+                if (Int32.Parse(idArray[i]).Equals(id))
+                    return true;
+            
+            return false;
         }
 
 
