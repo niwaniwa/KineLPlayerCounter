@@ -22,8 +22,7 @@ namespace Kinel.Counter.Editor
         internal const string TWITTER_URL = "https://twitter.com/ni_rilana";
         internal const string DOCUMENT_URL = "https://niwaniwa.github.io/PlayerCounter/#/ja-jp/";
         
-        private SerializedProperty countText, limitText, limit, animation, isPlatformCountMode, isQuest;
-        
+        private SerializedProperty countText, limitText, limit, animation, areaManagement, areas, isPlatformCountMode, isQuest;
 
         private bool isFold = false;
         
@@ -45,6 +44,8 @@ namespace Kinel.Counter.Editor
             limitText = serializedObject.FindProperty(nameof(PlayerCounter.limitText));
             limit = serializedObject.FindProperty(nameof(PlayerCounter.limit));
             animation = serializedObject.FindProperty(nameof(PlayerCounter.anim));
+            areaManagement = serializedObject.FindProperty(nameof(PlayerCounter.areaManagement));
+            areas = serializedObject.FindProperty(nameof(PlayerCounter.areas));
             isPlatformCountMode = serializedObject.FindProperty(nameof(PlayerCounter.isPlatformCountMode));
             isQuest = serializedObject.FindProperty(nameof(PlayerCounter.isQuest));
         }
@@ -84,6 +85,18 @@ namespace Kinel.Counter.Editor
                 EditorGUILayout.HelpBox("カウントする最大人数(インスタンス最大人数等) / " +
                                        "Maximum number of people to be counted (e.g., maximum number of instances)", MessageType.Info);
                 EditorGUILayout.Space();
+                EditorGUILayout.Space();
+                EditorGUILayout.LabelField("拡張設定(上級者向け)", EditorStyles.boldLabel);
+                EditorGUILayout.PropertyField(areaManagement, new GUIContent("エリア機能"));
+                EditorGUILayout.HelpBox("ドキュメントを参照してください。/ Please refer to the documentation.", MessageType.Info);
+
+                if (areaManagement.boolValue)
+                {
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.PropertyField(areas);
+                    EditorGUI.indentLevel--;
+                }
+
             }
             EditorGUILayout.EndVertical();
 
