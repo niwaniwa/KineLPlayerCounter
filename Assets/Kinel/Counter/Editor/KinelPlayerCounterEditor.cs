@@ -22,7 +22,7 @@ namespace Kinel.Counter.Editor
         internal const string TWITTER_URL = "https://twitter.com/ni_rilana";
         internal const string DOCUMENT_URL = "https://niwaniwa.github.io/PlayerCounter/#/ja-jp/";
         
-        private SerializedProperty countText, limitText, limit, animation, areaManagement, areas;
+        private SerializedProperty countText, limitText, limit, animation, areaManagement, areas, isPlatformCountMode, isQuest, platformCounter;
 
         private bool isFold = false;
         
@@ -46,6 +46,9 @@ namespace Kinel.Counter.Editor
             animation = serializedObject.FindProperty(nameof(PlayerCounter.anim));
             areaManagement = serializedObject.FindProperty(nameof(PlayerCounter.areaManagement));
             areas = serializedObject.FindProperty(nameof(PlayerCounter.areas));
+            isPlatformCountMode = serializedObject.FindProperty(nameof(PlayerCounter.isPlatformCountMode));
+            isQuest = serializedObject.FindProperty(nameof(PlayerCounter.isQuest));
+            platformCounter = serializedObject.FindProperty(nameof(PlayerCounter.platformCounter));
         }
 
         public override void OnInspectorGUI()
@@ -94,7 +97,26 @@ namespace Kinel.Counter.Editor
                     EditorGUILayout.PropertyField(areas);
                     EditorGUI.indentLevel--;
                 }
-
+                UdonSharpGUI.DrawUILine();
+                EditorGUILayout.Space();
+                if (areaManagement.boolValue)
+                {
+                    EditorGUILayout.LabelField("プラットフォーム別カウント");
+                    EditorGUILayout.HelpBox("現在、エリア機能と同時に設定することはできません。(今後対応予定)", MessageType.Info);
+                }
+                EditorGUI.BeginDisabledGroup(areaManagement.boolValue);
+                EditorGUILayout.PropertyField(isPlatformCountMode, new GUIContent("プラットフォーム別カウント"));
+                if (!areaManagement.boolValue)
+                {
+                    EditorGUILayout.HelpBox("ドキュメントを参照してください。/ Please refer to the documentation.", MessageType.Info);
+                }
+                if (isPlatformCountMode.boolValue)
+                {
+                    EditorGUI.indentLevel++;
+                    EditorGUILayout.PropertyField(isQuest, new GUIContent("Questカウントモード"));
+                    EditorGUI.indentLevel--;
+                }
+                EditorGUI.EndDisabledGroup();
             }
             EditorGUILayout.EndVertical();
         }
@@ -108,6 +130,7 @@ namespace Kinel.Counter.Editor
                 EditorGUILayout.PropertyField(countText);
                 EditorGUILayout.PropertyField(limitText);
                 EditorGUILayout.PropertyField(animation);
+                EditorGUILayout.PropertyField(platformCounter);
             }
             EditorGUI.indentLevel--;
         }

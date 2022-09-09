@@ -1,12 +1,12 @@
-﻿using System;
-using UdonSharp;
+﻿using UdonSharp;
 using UnityEngine;
 using UnityEngine.UI;
 using VRC.SDKBase;
+using VRC.Udon.Common.Interfaces;
 
 namespace Kinel.Counter.Udon
 {
-    [UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
+    [UdonBehaviourSyncMode(BehaviourSyncMode.Manual)]
     public class PlayerCounter : UdonSharpBehaviour
     {
 
@@ -16,13 +16,14 @@ namespace Kinel.Counter.Udon
         public PlayerCounterArea[] areas;
         public bool areaManagement = false; // true = エリアごとの人数カウント, false = ワールド全体の人数カウント
     
+        public bool isPlatformCountMode = false, isQuest = false;
+
+        public MultiPlatformPlayerCounter platformCounter;
+
         private int localPlayerCount = 0;
-        
 
         public void Start()
         {
-
-
             foreach (PlayerCounterArea area in areas)
             {
                 area.RegisterCounter(this);
@@ -40,7 +41,14 @@ namespace Kinel.Counter.Udon
 
             if (areaManagement)
                 return;
-            
+
+            if (isPlatformCountMode)
+            {
+                UpdateCounter();
+                return;
+            }
+
+
             localPlayerCount++;
             UpdateCounter();
         }
@@ -49,6 +57,13 @@ namespace Kinel.Counter.Udon
         {
             if (areaManagement)
                 return;
+
+            if (isPlatformCountMode)
+            {
+                // platformCounter.OnPlatformPlayerLeft(player);
+                // UpdateCounter();
+                return;
+            }
             
             localPlayerCount--;
             UpdateCounter();
@@ -56,8 +71,22 @@ namespace Kinel.Counter.Udon
 
         private void UpdateCounter()
         {
-            countText.text = (areaManagement && areas.Length == 0) ? "?" : $"{localPlayerCount}";
-            anim.SetFloat("value", localPlayerCount / limit);
+            if(areaManagement)
+            {
+                countText.text = (areas.Length == 0) ? "?" : $"{localPlayerCount}";
+                anim.SetFloat("value", localPlayerCount / limit);
+            } 
+            else if (isPlatformCountMode && platformCounter != null)
+            {
+                countText.text = (isQuest) ? $"{platformCounter.QuestCount()}" : $"{platformCounter.PCCount()}";
+                anim.SetFloat("value", (isQuest ? platformCounter.QuestCount() : platformCounter.PCCount()) / limit);
+            }
+            else
+            {
+                countText.text = $"{localPlayerCount}";
+                anim.SetFloat("value", localPlayerCount / limit);
+            }
+            
         }
 
         public void OnUpdateAreaCount()
@@ -68,6 +97,11 @@ namespace Kinel.Counter.Udon
                 localPlayerCount += area.GlobalPlayerCount;
             }
 
+            UpdateCounter();
+        }
+
+        public void OnUpdatePlatformCount()
+        {
             UpdateCounter();
         }
         
