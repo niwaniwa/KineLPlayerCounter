@@ -18,13 +18,12 @@ namespace Kinel.Counter.Udon
     
         public bool isPlatformCountMode = false, isQuest = false;
 
+        public MultiPlatformPlayerCounter platformCounter;
+
         private int localPlayerCount = 0;
-        private int questCount = 0;
-        private int pcCount = 0;
-        
+
         public void Start()
         {
-            
             foreach (PlayerCounterArea area in areas)
             {
                 area.RegisterCounter(this);
@@ -33,25 +32,23 @@ namespace Kinel.Counter.Udon
 
         public override void OnPlayerJoined(VRCPlayerApi player)
         {
-
             if (Networking.LocalPlayer == player)
             {
                 limitText.text = $"{limit}";
                 UpdateCounter();
-                if (isPlatformCountMode)
-                {
-# if UNITY_ANDROID 
-                    SendCustomNetworkEvent(NetworkEventTarget.All, nameof(OnQuestPlayerJoin));
-# else 
-                    SendCustomNetworkEvent(NetworkEventTarget.All, nameof(OnPCPlayerJoin));
-# endif
-                }
             }
 
 
             if (areaManagement)
                 return;
-            
+
+            if (isPlatformCountMode)
+            {
+                UpdateCounter();
+                return;
+            }
+
+
             localPlayerCount++;
             UpdateCounter();
         }
@@ -60,39 +57,36 @@ namespace Kinel.Counter.Udon
         {
             if (areaManagement)
                 return;
+
+            if (isPlatformCountMode)
+            {
+                // platformCounter.OnPlatformPlayerLeft(player);
+                // UpdateCounter();
+                return;
+            }
             
             localPlayerCount--;
             UpdateCounter();
         }
 
-        public void OnQuestPlayerJoin()
-        {
-            questCount++;
-            Debug.Log($"[{nameof(OnQuestPlayerJoin)}] {questCount}, {pcCount}");
-        }
-
-        public void OnPCPlayerJoin()
-        {
-            pcCount++;
-            Debug.Log($"[{nameof(OnPCPlayerJoin)}] {questCount}, {pcCount}");
-        }
-
-        public void OnQuestPlayerLeft()
-        {
-            questCount--;
-            Debug.Log($"[{nameof(OnQuestPlayerLeft)}] {questCount}, {pcCount}");
-        }
-
-        public void OnPCPlayerLeft()
-        {
-            pcCount--;
-            Debug.Log($"[{nameof(OnPCPlayerLeft)}] {questCount}, {pcCount}");
-        }
-
         private void UpdateCounter()
         {
-            countText.text = (areaManagement && areas.Length == 0) ? "?" : $"{localPlayerCount}";
-            anim.SetFloat("value", localPlayerCount / limit);
+            if(areaManagement)
+            {
+                countText.text = (areas.Length == 0) ? "?" : $"{localPlayerCount}";
+                anim.SetFloat("value", localPlayerCount / limit);
+            } 
+            else if (isPlatformCountMode && platformCounter != null)
+            {
+                countText.text = (isQuest) ? $"{platformCounter.QuestCount()}" : $"{platformCounter.PCCount()}";
+                anim.SetFloat("value", (isQuest ? platformCounter.QuestCount() : platformCounter.PCCount()) / limit);
+            }
+            else
+            {
+                countText.text = $"{localPlayerCount}";
+                anim.SetFloat("value", localPlayerCount / limit);
+            }
+            
         }
 
         public void OnUpdateAreaCount()
@@ -103,6 +97,11 @@ namespace Kinel.Counter.Udon
                 localPlayerCount += area.GlobalPlayerCount;
             }
 
+            UpdateCounter();
+        }
+
+        public void OnUpdatePlatformCount()
+        {
             UpdateCounter();
         }
         

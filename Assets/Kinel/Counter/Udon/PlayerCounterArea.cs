@@ -39,6 +39,8 @@ namespace Kinel.Counter.Udon
 
         }
 
+        #region Register
+
         public void RegisterCounter(PlayerCounter listener)
         {
             if (_listeners == null)
@@ -78,8 +80,9 @@ namespace Kinel.Counter.Udon
 
             Debug.Log($"{DEBUG_PREFIX}" + " Unregister " + $"{listener.name}");
         }
-
-
+        
+        #endregion
+        
         public override void OnPlayerTriggerEnter(VRCPlayerApi player)
         {
             if (!Utilities.IsValid(player))
@@ -169,6 +172,8 @@ namespace Kinel.Counter.Udon
                 counter.OnUpdateAreaCount();
             }
         }
+        
+        #region Player Array sys
 
         public void AddPlayer(int id)
         {
@@ -223,6 +228,7 @@ namespace Kinel.Counter.Udon
             return false;
         }
 
+        #endregion
 
       
     }
