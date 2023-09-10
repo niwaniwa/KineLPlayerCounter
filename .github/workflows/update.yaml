@@ -91,5 +91,5 @@ jobs:
       repository_name: playercounter
       version: ${{ needs.build.outputs.version }}
     secrets:
-      access-token: ${{ github.token }}
+      access-token: ${{ secrets.ACCESS_REPO }}
       
