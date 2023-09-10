@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     outputs:
-      package_name: ${{ steps.set_outputs.outputs.packageName }}
+      package_name: ${{ steps.set_outputs.outputs.package_name }}
     
     steps:
     
@@ -27,6 +27,9 @@ jobs:
         with: 
             path: "Packages/${{env.packageName}}/package.json"
             prop_path: "version"
+
+      - name: output version
+        run: echo ${{steps.version.outputs.prop}} 
 
       - name: Extract release notes
         id: release_notes
