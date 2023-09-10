@@ -15,6 +15,7 @@ jobs:
 
     outputs:
       package_name: ${{ steps.set_outputs.outputs.package_name }}
+      version: ${{ steps.set_outputs.outputs.version }}
     
     steps:
     
@@ -82,6 +83,8 @@ jobs:
         id: set_outputs
         run: |
           echo "package_name=${{ env.packageName }}" >> "$GITHUB_OUTPUT"
+          echo "version=${{ steps.version.outputs.prop }}" >> "$GITHUB_OUTPUT"
+          echo $package_name $version
 
   publish-vpm:
     uses: niwaniwa/vpm.niri.la/.github/workflows/update.yml@main
