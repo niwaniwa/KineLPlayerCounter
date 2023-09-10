@@ -72,7 +72,7 @@ jobs:
             Packages/${{ env.packageName }}/package.json
 
   publish-vpm:
-    uses: niwaniwa/vpm.niri.la/.github/workflows/update.yml@master
+    uses: niwaniwa/vpm.niri.la/.github/workflows/update.yml@main
     needs: [build]
     with:
       token: ${{ secrets.TOKEN }}
