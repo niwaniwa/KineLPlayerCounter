@@ -84,7 +84,7 @@ jobs:
     uses: niwaniwa/vpm.niri.la/.github/workflows/update.yml@main
     needs: [build]
     with:
-      repository_name: ${{needs.build.outputs.packageName}}
+      repository_name: ${{needs.build.outputs.package_name}}
       version: ${{ needs.build.outputs.version }}
     secrets:
       access-token: ${{ github.token }}
