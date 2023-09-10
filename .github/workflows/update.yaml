@@ -78,7 +78,7 @@ jobs:
       - name: Set outputs
         id: set_outputs
         run: |
-          echo "packageName" >> "$GITHUB_OUTPUT"
+          echo "package_name=${{ env.packageName }}" >> "$GITHUB_OUTPUT"
 
   publish-vpm:
     uses: niwaniwa/vpm.niri.la/.github/workflows/update.yml@main
