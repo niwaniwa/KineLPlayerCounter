@@ -82,15 +82,13 @@ jobs:
       - name: Set outputs
         id: set_outputs
         run: |
-          echo "package_name=${{ env.packageName }}" >> "$GITHUB_OUTPUT"
           echo "version=${{ steps.version.outputs.prop }}" >> "$GITHUB_OUTPUT"
-          echo "$package_name $version"
 
   publish-vpm:
     uses: niwaniwa/vpm.niri.la/.github/workflows/update.yml@main
     needs: [build]
     with:
-      repository_name: ${{needs.build.outputs.package_name}}
+      repository_name: playercounter
       version: ${{ needs.build.outputs.version }}
     secrets:
       access-token: ${{ github.token }}
