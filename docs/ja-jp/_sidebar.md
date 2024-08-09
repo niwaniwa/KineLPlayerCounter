@@ -10,6 +10,7 @@
 
   - [導入方法](install.md)
   - [基本設定](baseSetting.md)
+  - [拡張設定](advandedSettings.md)
 
 - その他
 

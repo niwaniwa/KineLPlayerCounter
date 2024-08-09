@@ -10,6 +10,7 @@
 
   - [Install](install)
   - [Settings](baseSetting.md)
+  - [Advanced Settings](advancedSetting.md)
 
 - Other
 
