@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c333ccfdd0cbdbc4ca30cef2dd6e6b9b, type: 3}
   m_Name: PlayerCounterArea Udon C# Program Asset
   m_EditorClassIdentifier: 
-  serializedUdonProgramAsset: {fileID: 11400000, guid: dbeefb25a5044824184a68a7523e98a0,
-    type: 2}
+  serializedUdonProgramAsset: {fileID: 11400000, guid: 12182095fe828e84f963bf07e333a906, type: 2}
   udonAssembly: 
   assemblyError: 
   sourceCsScript: {fileID: 11500000, guid: 9f6a8f824cfe46d1b5a94887be075a85, type: 3}
