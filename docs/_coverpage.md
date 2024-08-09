@@ -1,4 +1,4 @@
-# <b> KineL Player Counter <small>1.3.1</small></b>
+# <b> KineL Player Counter <small>1.5.0</small></b>
 
 > Headcount counter for VRC World
 
