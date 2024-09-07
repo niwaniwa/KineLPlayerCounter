@@ -19,7 +19,7 @@ namespace Kinel.Counter.Editor
 
         internal const string GITHUB_URL = "https://github.com/niwaniwa/PlayerCounter";
         internal const string TWITTER_URL = "https://twitter.com/ni_rilana";
-        internal const string DOCUMENT_URL = "https://niwaniwa.github.io/PlayerCounter/#/ja-jp/";
+        internal const string DOCUMENT_URL = "https://niwaniwa.github.io/KineLPlayerCounter/#/";
         
         private SerializedProperty countText, limitText, limit, animation, areaManagement, areas;
 

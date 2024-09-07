@@ -24,7 +24,6 @@ namespace Kinel.Counter.Udon
 
         private bool isInside = false;
         
-
         public int GlobalPlayerCount
         {
             get => globalPayerCount;
@@ -33,12 +32,7 @@ namespace Kinel.Counter.Udon
                 UpdateCount();
             }
         }
-
-        public void Start()
-        {
-
-        }
-
+        
         public void RegisterCounter(PlayerCounter listener)
         {
             if (_listeners == null)
@@ -131,14 +125,12 @@ namespace Kinel.Counter.Udon
             
             if (!Networking.IsOwner(Networking.LocalPlayer, gameObject))
                 return;
-
             
             if (CheckID(player.playerId))
             {
                 RemovePlayer(player.playerId);
                 CountDown();
             }
-
         }
 
         public override void OnPlayerRespawn(VRCPlayerApi player)
@@ -160,8 +152,7 @@ namespace Kinel.Counter.Udon
             RequestSerialization();
             UpdateCount();
         }
-
-
+        
         public void UpdateCount()
         {
             foreach (var counter in _listeners)
@@ -222,9 +213,5 @@ namespace Kinel.Counter.Udon
             
             return false;
         }
-
-
-      
     }
-    
 }
