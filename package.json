@@ -1,7 +1,7 @@
 {
   "name": "la.niri.playercounter",
   "displayName": "KineL Player Counter",
-  "version": "1.5.0",
+  "version": "1.5.1",
   "description": "Player Counter For VRChat",
   "gitDependencies": {},
   "vpmDependencies": {
