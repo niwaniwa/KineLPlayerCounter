@@ -166,7 +166,9 @@ jobs:
 
           gh release create "v${{ steps.bumpup.outputs.next_version }}" \
             -F "$RELEASE_NOTE" \
-            ${{ fromJSON(env.PRERELEASE) && '--prerelease' || '' }}
+            ${{ fromJSON(env.PRERELEASE) && '--prerelease' || '' }} \
+            "${{ env.zipFile }}" \
+            "package.json" \
 
       - name: prepare next release version
         if: inputs.publish && !fromJSON(env.PRERELEASE)
