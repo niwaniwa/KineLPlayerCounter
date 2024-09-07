@@ -188,6 +188,6 @@ jobs:
     needs: [create-release]
     with:
       repository_name: playercounter
-      version: ${{ needs.create-release.outputs.version }}
+      version: v${{ needs.create-release.outputs.version }}
     secrets:
       access-token: ${{ secrets.ACCESS_REPO }}
