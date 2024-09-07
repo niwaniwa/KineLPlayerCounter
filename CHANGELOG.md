@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 ### Removed
+- Remove unwanted animations[`#13`](https://github.com/niwaniwa/KineLPlayerCounter/pull/13)
 
 ## 1.5.0 - 2023-09-10
 - Change to VPM. [`#7`](https://github.com/niwaniwa/KineLVideoPlayer/issues/7)
