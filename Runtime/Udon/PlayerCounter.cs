@@ -9,20 +9,16 @@ namespace Kinel.Counter.Udon
     [UdonBehaviourSyncMode(BehaviourSyncMode.NoVariableSync)]
     public class PlayerCounter : UdonSharpBehaviour
     {
-
         public Text countText, limitText;
         public float limit = 32f;
-        public Animator anim;
+        public Animator animation;
         public PlayerCounterArea[] areas;
         public bool areaManagement = false; // true = エリアごとの人数カウント, false = ワールド全体の人数カウント
     
         private int localPlayerCount = 0;
         
-
         public void Start()
         {
-
-
             foreach (PlayerCounterArea area in areas)
             {
                 area.RegisterCounter(this);
@@ -36,7 +32,6 @@ namespace Kinel.Counter.Udon
                 limitText.text = $"{limit}";
                 UpdateCounter();
             }
-
 
             if (areaManagement)
                 return;
@@ -57,7 +52,7 @@ namespace Kinel.Counter.Udon
         private void UpdateCounter()
         {
             countText.text = (areaManagement && areas.Length == 0) ? "?" : $"{localPlayerCount}";
-            anim.SetFloat("value", localPlayerCount / limit);
+            animation.SetFloat("value", localPlayerCount / limit);
         }
 
         public void OnUpdateAreaCount()
@@ -67,12 +62,7 @@ namespace Kinel.Counter.Udon
             {
                 localPlayerCount += area.GlobalPlayerCount;
             }
-
             UpdateCounter();
         }
-        
-
-
-
     }
 }

@@ -42,7 +42,7 @@ namespace Kinel.Counter.Editor
             countText = serializedObject.FindProperty(nameof(PlayerCounter.countText));
             limitText = serializedObject.FindProperty(nameof(PlayerCounter.limitText));
             limit = serializedObject.FindProperty(nameof(PlayerCounter.limit));
-            animation = serializedObject.FindProperty(nameof(PlayerCounter.anim));
+            animation = serializedObject.FindProperty(nameof(PlayerCounter.animation));
             areaManagement = serializedObject.FindProperty(nameof(PlayerCounter.areaManagement));
             areas = serializedObject.FindProperty(nameof(PlayerCounter.areas));
         }
