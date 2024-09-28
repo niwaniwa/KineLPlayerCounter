@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Fixed
+- Fixed counts not updating correctly during Join.[`#17`](https://github.com/niwaniwa/KineLPlayerCounter/pull/17)
+- Fixed asset references.[`19`](https://github.com/niwaniwa/KineLPlayerCounter/pull/19)
 
 ### Security
 
